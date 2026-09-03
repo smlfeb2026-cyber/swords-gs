@@ -11,12 +11,14 @@ import { WishlistDrawer } from './components/WishlistDrawer';
 import { LegalGuideModal } from './components/LegalGuideModal';
 import { PlazaNoticeModal } from './components/PlazaNoticeModal';
 import { MaintenanceGuideModal } from './components/MaintenanceGuideModal';
+import { TalkToUs } from './components/TalkToUs';
 import { Footer } from './components/Footer';
 import { 
   ShieldCheck, 
   Sparkles, 
   MapPin, 
   MessageCircle, 
+  MessageSquare,
   Filter, 
   SlidersHorizontal, 
   RotateCcw,
@@ -28,6 +30,7 @@ import {
 
 export default function App() {
   // Navigation & Filter states
+  const [activeTab, setActiveTab] = useState<'catalogue' | 'talk-to-us'>('catalogue');
   const [activeCategory, setActiveCategory] = useState<CategoryType>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSteel, setSelectedSteel] = useState('all');
@@ -213,8 +216,13 @@ export default function App() {
     <div className="min-h-screen bg-[#0A0A0A] text-[#F1F1F1] flex flex-col selection:bg-[#D4AF37] selection:text-black">
       {/* 1. Header */}
       <Header
+        activeTab={activeTab}
+        onSelectTab={setActiveTab}
         activeCategory={activeCategory}
-        onSelectCategory={setActiveCategory}
+        onSelectCategory={(cat) => {
+          setActiveCategory(cat);
+          setActiveTab('catalogue');
+        }}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         cartCount={totalCartCount}
@@ -228,12 +236,24 @@ export default function App() {
         onSelectProduct={(p) => setSelectedProduct(p)}
       />
 
-      {/* 2. Hero Section with Carousel & Tri-Column Grid */}
-      <Hero
-        onSelectCategory={setActiveCategory}
-        onOpenPlazaNotice={() => setPlazaNoticeOpen(true)}
-        onOpenLegalGuide={() => setLegalGuideOpen(true)}
-      />
+      {/* Main Content Area based on activeTab */}
+      {activeTab === 'talk-to-us' ? (
+        <TalkToUs
+          onBackToCatalogue={() => {
+            setActiveTab('catalogue');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          onOpenLegalGuide={() => setLegalGuideOpen(true)}
+          onOpenPlazaNotice={() => setPlazaNoticeOpen(true)}
+        />
+      ) : (
+        <>
+          {/* 2. Hero Section with Carousel & Tri-Column Grid */}
+          <Hero
+            onSelectCategory={setActiveCategory}
+            onOpenPlazaNotice={() => setPlazaNoticeOpen(true)}
+            onOpenLegalGuide={() => setLegalGuideOpen(true)}
+          />
 
       {/* 3. Category Archive Showcase */}
       <CategoryNav
@@ -303,6 +323,21 @@ export default function App() {
                   {tab.label}
                 </button>
               ))}
+
+              {/* Talk to Us Tab in Catalogue Filter Bar */}
+              <button
+                id="filter-talk-to-us-tab"
+                onClick={() => {
+                  setActiveTab('talk-to-us');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className="px-3 py-1.5 uppercase tracking-wider transition-all cursor-pointer flex items-center gap-1.5 border border-[#D4AF37]/50 bg-[#16140D] text-[#D4AF37] hover:bg-[#D4AF37] hover:text-black font-bold ml-1"
+                title="Open Collector Forum & Disqus Discussion"
+              >
+                <MessageSquare className="w-3 h-3" />
+                <span>Talk to Us</span>
+                <span className="text-[9px] bg-[#221f15] border border-[#D4AF37]/40 px-1 py-0.2 rounded-none">Disqus</span>
+              </button>
             </div>
 
             {/* Sort Dropdown */}
@@ -511,13 +546,23 @@ export default function App() {
           </div>
         </div>
       </section>
+        </>
+      )}
 
       {/* 7. Footer */}
       <Footer
-        onSelectCategory={setActiveCategory}
+        onSelectCategory={(cat) => {
+          setActiveCategory(cat);
+          setActiveTab('catalogue');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
         onOpenLegalGuide={() => setLegalGuideOpen(true)}
         onOpenPlazaNotice={() => setPlazaNoticeOpen(true)}
         onOpenMaintenanceGuide={() => setMaintenanceGuideOpen(true)}
+        onOpenTalkToUs={() => {
+          setActiveTab('talk-to-us');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
       />
 
       {/* 8. Modals and Drawers */}

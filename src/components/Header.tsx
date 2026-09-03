@@ -5,6 +5,7 @@ import {
   Heart, 
   ShieldCheck, 
   MessageCircle, 
+  MessageSquare,
   MapPin, 
   Menu, 
   X, 
@@ -13,6 +14,8 @@ import {
 import { CategoryType, Product } from '../types';
 
 interface HeaderProps {
+  activeTab: 'catalogue' | 'talk-to-us';
+  onSelectTab: (tab: 'catalogue' | 'talk-to-us') => void;
   activeCategory: CategoryType;
   onSelectCategory: (cat: CategoryType) => void;
   searchQuery: string;
@@ -29,6 +32,8 @@ interface HeaderProps {
 }
 
 export const Header: React.FC<HeaderProps> = ({
+  activeTab,
+  onSelectTab,
   activeCategory,
   onSelectCategory,
   searchQuery,
@@ -82,6 +87,17 @@ export const Header: React.FC<HeaderProps> = ({
               <span>SPF Compliance & IC Verification</span>
             </button>
             <span className="text-neutral-800">|</span>
+            <button
+              id="topbar-talk-to-us"
+              onClick={() => onSelectTab('talk-to-us')}
+              className={`flex items-center gap-1 transition-colors cursor-pointer ${
+                activeTab === 'talk-to-us' ? 'text-[#D4AF37] font-semibold' : 'text-gray-400 hover:text-[#D4AF37]'
+              }`}
+            >
+              <MessageSquare className="w-3 h-3 text-[#D4AF37]" />
+              <span>Talk to Us</span>
+            </button>
+            <span className="text-neutral-800">|</span>
             <a 
               href="https://wa.me/6591234567?text=Hello%20CAESARS%20Singapore%2C%20I%20would%20like%20to%20inquire%20about%20your%20sword%20and%20armour%20collection" 
               target="_blank" 
@@ -111,6 +127,7 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Logo */}
           <div 
             onClick={() => {
+              onSelectTab('catalogue');
               onSelectCategory('all');
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
@@ -127,11 +144,14 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Desktop Nav Links */}
           <nav className="hidden lg:flex items-center gap-7 text-[11px] uppercase tracking-[0.18em] font-medium text-gray-400">
             {navCategories.map((cat) => {
-              const active = activeCategory === cat.id;
+              const active = activeTab === 'catalogue' && activeCategory === cat.id;
               return (
                 <button
                   key={cat.id}
-                  onClick={() => onSelectCategory(cat.id)}
+                  onClick={() => {
+                    onSelectTab('catalogue');
+                    onSelectCategory(cat.id);
+                  }}
                   className={`transition-colors pb-1 cursor-pointer ${
                     active 
                       ? 'text-[#D4AF37] border-b border-[#D4AF37]' 
@@ -142,6 +162,20 @@ export const Header: React.FC<HeaderProps> = ({
                 </button>
               );
             })}
+
+            {/* Talk To Us Forum Tab */}
+            <button
+              id="nav-talk-to-us-tab"
+              onClick={() => onSelectTab('talk-to-us')}
+              className={`transition-colors pb-1 cursor-pointer flex items-center gap-1.5 ${
+                activeTab === 'talk-to-us'
+                  ? 'text-[#D4AF37] border-b border-[#D4AF37] font-semibold'
+                  : 'hover:text-[#D4AF37] text-gray-300'
+              }`}
+            >
+              <MessageSquare className="w-3 h-3 text-[#D4AF37]" />
+              <span>Talk to Us</span>
+            </button>
           </nav>
         </div>
 
@@ -245,16 +279,98 @@ export const Header: React.FC<HeaderProps> = ({
             )}
           </div>
 
+          {/* Prominent Talk to Us Header Tab / Button */}
+          <button
+            id="header-talk-to-us-btn"
+            onClick={() => {
+              onSelectTab(activeTab === 'talk-to-us' ? 'catalogue' : 'talk-to-us');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            className={`flex items-center gap-1.5 px-3 py-1.5 text-[10px] uppercase tracking-wider font-mono border transition-all cursor-pointer ${
+              activeTab === 'talk-to-us'
+                ? 'border-[#D4AF37] bg-[#D4AF37] text-black font-bold'
+                : 'border-[#333] hover:border-[#D4AF37] text-[#D4AF37] bg-[#141414] hover:bg-[#1C1C1C]'
+            }`}
+            title="Open Talk to Us (Disqus Q&A Forum)"
+          >
+            <MessageSquare className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Talk to Us</span>
+            <span className="sm:hidden">Forum</span>
+          </button>
+
           {/* Shop Now CTA */}
           <div 
             onClick={() => {
+              onSelectTab('catalogue');
               onSelectCategory('all');
               const catalogue = document.getElementById('catalogue-section');
               if (catalogue) catalogue.scrollIntoView({ behavior: 'smooth' });
             }}
-            className="text-[10px] uppercase tracking-widest bg-[#D4AF37] text-black px-4 py-2 font-bold cursor-pointer hover:bg-[#e4c04c] transition-colors"
+            className="text-[10px] uppercase tracking-widest bg-[#D4AF37] text-black px-3 sm:px-4 py-2 font-bold cursor-pointer hover:bg-[#e4c04c] transition-colors"
           >
             Shop Now
+          </div>
+        </div>
+      </div>
+
+      {/* Primary Sticky Tab Row (Always Visible in Header on All Screen Sizes) */}
+      <div className="bg-[#0C0C0C] border-t border-[#1F1F1F] px-4 sm:px-6 lg:px-12">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+          {/* Tabs */}
+          <div className="flex items-center space-x-1 sm:space-x-2">
+            <button
+              id="header-tab-catalogue"
+              onClick={() => {
+                onSelectTab('catalogue');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className={`py-2.5 px-3 sm:px-5 text-[11px] sm:text-xs font-mono uppercase tracking-[0.16em] flex items-center gap-2 border-b-2 transition-all cursor-pointer ${
+                activeTab === 'catalogue'
+                  ? 'border-[#D4AF37] text-[#D4AF37] font-bold bg-[#141414]'
+                  : 'border-transparent text-gray-400 hover:text-white hover:bg-[#111]'
+              }`}
+            >
+              <span>⚔️ Weaponry Catalogue</span>
+            </button>
+
+            <button
+              id="header-tab-talk-to-us"
+              onClick={() => {
+                onSelectTab('talk-to-us');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className={`py-2.5 px-3 sm:px-5 text-[11px] sm:text-xs font-mono uppercase tracking-[0.16em] flex items-center gap-2 border-b-2 transition-all cursor-pointer ${
+                activeTab === 'talk-to-us'
+                  ? 'border-[#D4AF37] text-[#D4AF37] font-bold bg-[#141414]'
+                  : 'border-transparent text-gray-300 hover:text-[#D4AF37] hover:bg-[#111]'
+              }`}
+            >
+              <MessageSquare className="w-3.5 h-3.5 text-[#D4AF37]" />
+              <span className="font-semibold">Talk to Us</span>
+              <span className="text-[9px] bg-[#221f15] border border-[#D4AF37]/50 text-[#D4AF37] px-1 py-0.2 rounded-none font-bold">
+                Disqus
+              </span>
+            </button>
+          </div>
+
+          {/* Right indicator note */}
+          <div className="hidden sm:flex items-center gap-3 text-[11px] font-mono text-gray-400">
+            {activeTab === 'talk-to-us' ? (
+              <span className="text-[#D4AF37] flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>Collector Forum & Disqus Discussions</span>
+              </span>
+            ) : (
+              <button
+                onClick={() => {
+                  onSelectTab('talk-to-us');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className="text-gray-400 hover:text-[#D4AF37] flex items-center gap-1 transition-colors cursor-pointer"
+              >
+                <span>Have a question? Join the forum in Talk to Us →</span>
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -282,11 +398,12 @@ export const Header: React.FC<HeaderProps> = ({
               <button
                 key={cat.id}
                 onClick={() => {
+                  onSelectTab('catalogue');
                   onSelectCategory(cat.id);
                   setMobileMenuOpen(false);
                 }}
-                className={`text-left p-2 border ${
-                  activeCategory === cat.id 
+                className={`text-left p-2 border transition-colors ${
+                  activeTab === 'catalogue' && activeCategory === cat.id 
                     ? 'border-[#D4AF37] text-[#D4AF37] bg-[#161616]' 
                     : 'border-[#222] text-gray-400 hover:text-white'
                 }`}
@@ -294,6 +411,25 @@ export const Header: React.FC<HeaderProps> = ({
                 {cat.label}
               </button>
             ))}
+
+            {/* Talk to Us Tab in Mobile Menu */}
+            <button
+              onClick={() => {
+                onSelectTab('talk-to-us');
+                setMobileMenuOpen(false);
+              }}
+              className={`col-span-2 text-left p-2.5 border flex items-center justify-between transition-colors ${
+                activeTab === 'talk-to-us'
+                  ? 'border-[#D4AF37] text-[#D4AF37] bg-[#161616]'
+                  : 'border-[#222] text-gray-300 hover:text-[#D4AF37]'
+              }`}
+            >
+              <span className="flex items-center gap-2">
+                <MessageSquare className="w-3.5 h-3.5 text-[#D4AF37]" />
+                <span className="font-semibold">Talk to Us (Discussions & Forum)</span>
+              </span>
+              <span className="text-[9px] font-mono text-[#D4AF37] uppercase bg-[#1e1a10] border border-[#D4AF37]/30 px-1.5 py-0.5">Disqus</span>
+            </button>
           </div>
 
           <div className="pt-2 border-t border-[#222] space-y-2 text-xs text-gray-400">

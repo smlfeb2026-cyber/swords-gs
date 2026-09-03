@@ -7,6 +7,7 @@ interface FooterProps {
   onOpenLegalGuide: () => void;
   onOpenPlazaNotice: () => void;
   onOpenMaintenanceGuide: () => void;
+  onOpenTalkToUs?: () => void;
 }
 
 export const Footer: React.FC<FooterProps> = ({
@@ -14,6 +15,7 @@ export const Footer: React.FC<FooterProps> = ({
   onOpenLegalGuide,
   onOpenPlazaNotice,
   onOpenMaintenanceGuide,
+  onOpenTalkToUs,
 }) => {
   return (
     <footer className="w-full bg-[#070707] border-t border-[#222] text-gray-400">
@@ -129,6 +131,16 @@ export const Footer: React.FC<FooterProps> = ({
                 Japanese Blade Maintenance Guide
               </button>
             </li>
+            {onOpenTalkToUs && (
+              <li>
+                <button 
+                  onClick={onOpenTalkToUs}
+                  className="hover:text-[#D4AF37] transition-colors text-left cursor-pointer text-[#D4AF37]"
+                >
+                  Talk to Us (Collector Forum & Q&A)
+                </button>
+              </li>
+            )}
             <li>
               <span className="text-gray-500">Free Islandwide Delivery over S$150</span>
             </li>
